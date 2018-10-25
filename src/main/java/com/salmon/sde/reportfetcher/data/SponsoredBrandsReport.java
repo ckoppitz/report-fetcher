@@ -1,7 +1,15 @@
 package com.salmon.sde.reportfetcher.data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class SponsoredBrandsReport
 {
+	@Id
+	@GeneratedValue
+	private Long id;
 	private String campaignName;
 	private String campaignId;
 	private String campaignStatus;
@@ -17,6 +25,16 @@ public class SponsoredBrandsReport
 	private String attributedSales14d;
 	private String attributedSales14dSameSKU;
 	private String attributedConversions14d;
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
 	public String getCampaignName()
 	{

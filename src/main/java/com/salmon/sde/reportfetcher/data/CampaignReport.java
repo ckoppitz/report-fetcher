@@ -1,7 +1,15 @@
 package com.salmon.sde.reportfetcher.data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class CampaignReport
 {
+	@Id
+	@GeneratedValue
+	private Long id;
 	private String bidPlus;
 	private String campaignName;
 	private String campaignId;
@@ -30,6 +38,17 @@ public class CampaignReport
 	private String attributedSales7dSameSKU;
 	private String attributedSales14dSameSKU;
 	private String attributedSales30dSameSKU;
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
+
 
 	public String getBidPlus()
 	{
