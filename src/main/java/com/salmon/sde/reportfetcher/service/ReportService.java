@@ -6,6 +6,7 @@ import com.salmon.sde.reportfetcher.data.ReportRequest;
 import com.salmon.sde.reportfetcher.data.ReportResponse;
 import com.salmon.sde.reportfetcher.entities.AbstractReportLine;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.zip.GZIPInputStream;
 
 public class ReportService
@@ -62,23 +61,26 @@ public class ReportService
 
 		LOG.info("Looking up report '{}' location at '{}'...", reportId, reportMetadata.getLocation());
 		final ResponseEntity<String> reportLocationResponse = amazonRestTemplate.exchange(reportMetadata.getLocation(), HttpMethod.GET, createEntityForRequest(null), String.class);
+		final URI reportLocation = reportLocationResponse.getHeaders().getLocation();
 
-		final String reportLocation = getLocation(reportLocationResponse.getHeaders());
-		if (reportLocationResponse.getStatusCode() == HttpStatus.TEMPORARY_REDIRECT && !StringUtils.isEmpty(reportLocation))
+		if (reportLocationResponse.getStatusCode() == HttpStatus.TEMPORARY_REDIRECT && reportLocation != null)
 		{
 			LOG.info("Downloading report '{}' from '{}'...", reportId, reportLocation);
-			final byte[] rawReport = amazonRestTemplate.exchange(new URI(reportLocation), HttpMethod.GET, createEntityForDownload(), byte[].class).getBody();
-			final String stringReport = IOUtils.toString(new GZIPInputStream(new ByteArrayInputStream(rawReport)), Charset.forName("UTF-8"));
-			LOG.debug("Received report: {}", stringReport);
+			final byte[] rawReport = amazonRestTemplate.getForObject(reportLocation, byte[].class);
 
-			T[] report = objectMapper.readValue(stringReport, reportType);
-			addLineNumbers(reportId, report);
-			repository.saveAll(Arrays.asList(report));
+			if (ArrayUtils.isNotEmpty(rawReport))
+			{
+				final String stringReport = IOUtils.toString(new GZIPInputStream(new ByteArrayInputStream(rawReport)), Charset.forName("UTF-8"));
+				LOG.debug("Received report: {}", stringReport);
 
-			return stringReport;
+				T[] report = objectMapper.readValue(stringReport, reportType);
+				addLineNumbers(reportId, report);
+				repository.saveAll(Arrays.asList(report));
+				return stringReport;
+			}
 		}
 
-		return reportLocation;
+		return "Error.";
 	}
 
 	private <T extends AbstractReportLine> void addLineNumbers(final String reportId, final T[] report)
@@ -119,23 +121,6 @@ public class ReportService
 		headers.add("Amazon-Advertising-API-Scope", amazonEndpointConfig.getScope());
 		headers.add("Authorization", "Bearer " + amazonEndpointConfig.getAuthorization());
 		return new HttpEntity<>(request, headers);
-	}
-
-	private <T> HttpEntity<T> createEntityForDownload()
-	{
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		return new HttpEntity<>(headers);
-	}
-
-	private String getLocation(final HttpHeaders httpHeaders)
-	{
-		if (httpHeaders.containsKey("Location") && !httpHeaders.get("Location").isEmpty())
-		{
-			return httpHeaders.get("Location").get(0);
-		}
-
-		return null;
 	}
 }
 
