@@ -1,20 +1,15 @@
-package com.salmon.sde.reportfetcher.data;
+package com.salmon.sde.reportfetcher.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity
-public class KeywordReport
+public class CampaignReportLine extends AbstractReportLine
 {
-	@Id
-	@GeneratedValue
-	private Long id;
+	private String bidPlus;
 	private String campaignName;
 	private String campaignId;
-	private String keywordId;
-	private String keywordText;
-	private String matchType;
+	private String campaignStatus;
+	private String campaignBudget;
 	private String impressions;
 	private String clicks;
 	private String cost;
@@ -39,16 +34,15 @@ public class KeywordReport
 	private String attributedSales14dSameSKU;
 	private String attributedSales30dSameSKU;
 
-	public Long getId()
+	public String getBidPlus()
 	{
-		return id;
+		return bidPlus;
 	}
 
-	public void setId(final Long id)
+	public void setBidPlus(final String bidPlus)
 	{
-		this.id = id;
+		this.bidPlus = bidPlus;
 	}
-
 
 	public String getCampaignName()
 	{
@@ -70,34 +64,24 @@ public class KeywordReport
 		this.campaignId = campaignId;
 	}
 
-	public String getKeywordId()
+	public String getCampaignStatus()
 	{
-		return keywordId;
+		return campaignStatus;
 	}
 
-	public void setKeywordId(final String keywordId)
+	public void setCampaignStatus(final String campaignStatus)
 	{
-		this.keywordId = keywordId;
+		this.campaignStatus = campaignStatus;
 	}
 
-	public String getKeywordText()
+	public String getCampaignBudget()
 	{
-		return keywordText;
+		return campaignBudget;
 	}
 
-	public void setKeywordText(final String keywordText)
+	public void setCampaignBudget(final String campaignBudget)
 	{
-		this.keywordText = keywordText;
-	}
-
-	public String getMatchType()
-	{
-		return matchType;
-	}
-
-	public void setMatchType(final String matchType)
-	{
-		this.matchType = matchType;
+		this.campaignBudget = campaignBudget;
 	}
 
 	public String getImpressions()

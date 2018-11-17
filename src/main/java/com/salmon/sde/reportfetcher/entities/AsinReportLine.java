@@ -1,15 +1,10 @@
-package com.salmon.sde.reportfetcher.data;
+package com.salmon.sde.reportfetcher.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity
-public class AsinReport
+public class AsinReportLine extends AbstractReportLine
 {
-	@Id
-	@GeneratedValue
-	private Long id;
 	private String campaignName;
 	private String campaignId;
 	private String adGroupName;
@@ -29,16 +24,6 @@ public class AsinReport
 	private String attributedSales7dOtherSKU;
 	private String attributedSales14dOtherSKU;
 	private String attributedSales30dOtherSKU;
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(final Long id)
-	{
-		this.id = id;
-	}
 
 
 	public String getCampaignName()
