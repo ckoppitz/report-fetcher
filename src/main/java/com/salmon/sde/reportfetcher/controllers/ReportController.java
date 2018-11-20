@@ -1,6 +1,8 @@
 package com.salmon.sde.reportfetcher.controllers;
 
+import com.salmon.sde.reportfetcher.entities.AsinReportLine;
 import com.salmon.sde.reportfetcher.entities.CampaignReportLine;
+import com.salmon.sde.reportfetcher.entities.KeywordReportLine;
 import com.salmon.sde.reportfetcher.service.ReportService;
 import com.salmon.sde.reportfetcher.repositories.AsinReportLineRepository;
 import com.salmon.sde.reportfetcher.repositories.CampaignReportLineRepository;
@@ -15,13 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController
 {
 	private static final Logger LOG = LoggerFactory.getLogger(ReportController.class);
-
-	private static final String CAMPAIGN_REPORT_METRICS = "bidPlus,campaignName,campaignId,campaignStatus,campaignBudget,impressions,clicks,cost," +
-			"attributedConversions1d,attributedConversions7d,attributedConversions14d,attributedConversions30d," +
-			"attributedConversions1dSameSKU,attributedConversions7dSameSKU,attributedConversions14dSameSKU,attributedConversions30dSameSKU," +
-			"attributedUnitsOrdered1d,attributedUnitsOrdered7d,attributedUnitsOrdered14d,attributedUnitsOrdered30d," +
-			"attributedSales1d,attributedSales7d,attributedSales14d,attributedSales30d," +
-			"attributedSales1dSameSKU,attributedSales7dSameSKU,attributedSales14dSameSKU,attributedSales30dSameSKU";
 
 	private final AsinReportLineRepository asinReportLineRepository;
 	private final CampaignReportLineRepository campaignReportLineRepository;
@@ -38,9 +33,39 @@ public class ReportController
 		this.reportService = reportService;
 	}
 
-	@RequestMapping("/generate/campaigns")
-	public String FetchReport(@RequestParam(required = true, name = "date") final String date) throws Exception
+	@RequestMapping("/generate/sponsored-products/campaigns")
+	public String generateSPCampaignsReport(@RequestParam(required = true, name = "date") final String date) throws Exception
 	{
-		return reportService.fetchReport("/v2/sp/campaigns/report", date, campaignReportLineRepository, CampaignReportLine[].class);
+		return reportService.fetchReport("/v2/sp/campaigns/report", CampaignReportLine.METRICS, date, campaignReportLineRepository, CampaignReportLine[].class);
+	}
+
+	@RequestMapping("/generate/sponsored-products/keywords")
+	public String generateSPKeywordReport(@RequestParam(required = true, name = "date") final String date) throws Exception
+	{
+		return reportService.fetchReport("/v2/sp/keywords/report", KeywordReportLine.METRICS, date, keywordReportLineRepository, KeywordReportLine[].class);
+	}
+
+	@RequestMapping("/generate/sponsored-products/asins")
+	public String generateSPAsinsReport(@RequestParam(required = true, name = "date") final String date) throws Exception
+	{
+		return reportService.fetchReport("/v2/sp/asins/report", AsinReportLine.METRICS, date, asinReportLineRepository, AsinReportLine[].class);
+	}
+
+	@RequestMapping("/generate/sponsored-brands/campaigns")
+	public String generateSBCampaignsReport(@RequestParam(required = true, name = "date") final String date) throws Exception
+	{
+		return reportService.fetchReport("/v2/hsa/campaigns/report", CampaignReportLine.METRICS, date, campaignReportLineRepository, CampaignReportLine[].class);
+	}
+
+	@RequestMapping("/generate/sponsored-brands/keywords")
+	public String generateSBKeywordReport(@RequestParam(required = true, name = "date") final String date) throws Exception
+	{
+		return reportService.fetchReport("/v2/hsa/keywords/report", KeywordReportLine.METRICS, date, keywordReportLineRepository, KeywordReportLine[].class);
+	}
+
+	@RequestMapping("/generate/sponsored-brands/asins")
+	public String generateSBAsinsReport(@RequestParam(required = true, name = "date") final String date) throws Exception
+	{
+		return reportService.fetchReport("/v2/hsa/asins/report", AsinReportLine.METRICS, date, asinReportLineRepository, AsinReportLine[].class);
 	}
 }

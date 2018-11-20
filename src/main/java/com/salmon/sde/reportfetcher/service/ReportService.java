@@ -42,10 +42,10 @@ public class ReportService
 		this.objectMapper = objectMapper;
 	}
 
-	public <T extends AbstractReportLine> String fetchReport(final String reportCreationEndpoint, final String date, final JpaRepository<T, Long> repository, final Class<T[]> reportType) throws Exception
+	public <T extends AbstractReportLine> String fetchReport(final String reportCreationEndpoint, final String metrics, final String date, final JpaRepository<T, Long> repository, final Class<T[]> reportType) throws Exception
 	{
 		LOG.info("Fetching report for time '{}'.", date);
-		final HttpEntity<ReportRequest> entity = createEntityForRequest(createRequest(date, "impressions,clicks"));
+		final HttpEntity<ReportRequest> entity = createEntityForRequest(createRequest(date, metrics));
 		final ResponseEntity<String> reportCreationResponse = amazonRestTemplate.exchange(amazonEndpointConfig.getEndpoint() + reportCreationEndpoint, HttpMethod.POST, entity, String.class);
 
 		ReportResponse reportMetadata = processResponse(reportCreationResponse);

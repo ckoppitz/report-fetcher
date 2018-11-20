@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 @Entity
 public class AsinReportLine extends AbstractReportLine
 {
+	public static final String METRICS = "campaignName,campaignId,adGroupName,adGroupId,keywordId,keywordText,asin,otherAsin,sku,currencymatchType," +
+			"attributedUnitsOrdered1dOtherSKU,attributedUnitsOrdered7dOtherSKU,attributedUnitsOrdered14dOtherSKU,attributedUnitsOrdered30dOtherSKU," +
+			"attributedSales1dOtherSKU,attributedSales7dOtherSKU,attributedSales14dOtherSKU,attributedSales30dOtherSKU";
+
 	private String campaignName;
 	private String campaignId;
 	private String adGroupName;
